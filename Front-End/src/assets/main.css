@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+*,
+*::after,
+*::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-rg: 1rem;
+    --spacing-md: 1.25rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+}
+
+:root[data-theme="light"] {
+    --bg-light: hsl(0, 0%, 90%);
+    --bg-dark: hsl(0, 0%, 80%);
+    --bg: hsl(0, 0%, 85%);
+
+    --border-color: hsl(0, 0%, 75%);
+
+    --text-color: hsl(0, 0%, 10%);
+    --text-muted: hsl(0, 0%, 40%);
+
+    --accent-color: hsl(247, 63%, 50%);
+    --secondary-color: hsl(247, 63%, 35%);
+
+    --priority-low: hsl(216, 98%, 52%);
+    --priority-med: hsl(45, 100%, 51%);
+    --priority-high: hsl(354, 70%, 54%);
+}
+
+:root[data-theme="dark"] {
+    --bg-light: hsl(0, 0%, 20%);
+    --bg-dark: hsl(0, 0%, 10%);
+    --bg: hsl(0, 0%, 15%);
+
+    --border-color: hsl(0, 0%, 25%);
+
+    --text-color: hsl(0, 0%, 75%);
+    --text-muted: hsl(0, 0%, 55%);
+
+    --accent-color: hsl(247, 63%, 50%);
+    --secondary-color: hsl(247, 63%, 35%);
+
+    --priority-low: hsl(216, 98%, 52%);
+    --priority-med: hsl(45, 100%, 51%);
+    --priority-high: hsl(354, 70%, 54%);
+}
+
+html {
+    scroll-behavior: smooth;
+    scrollbar-gutter: stable;
+}
+
+body {
+    font-family: 'Inter', Arial, Sasn-serif;
+    background-color: var(--bg-dark);
+    accent-color: var(--accent-color);
+    color: var(--text-color);
+}
+
+input, button, textarea, select {
+    font-family: inherit;
+}
+
+svg {
+    color: var(--text-color);
+}

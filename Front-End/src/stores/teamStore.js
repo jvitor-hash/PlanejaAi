@@ -7,11 +7,14 @@ export const useTeamStore = defineStore('teamStore', {
   }),
 
   actions: {
-    async initStore() {
-      const { data, error, loading } = await getUsers();
+    async fetchTeams() {
+      const { data, error, loading } = await getAllTeams();
 
       if (data)
         this.teams = data.value;
-    }
+
+      if (error.value)
+        throw new Error(`Failed to fetch teams, ${error.value?.message}`);
+    },
   }
 })

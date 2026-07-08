@@ -54,6 +54,7 @@ function toggleChip(chip) {
   padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: 3em;
   cursor: pointer;
+  user-select: none;
 }
 
 .selected {

@@ -9,10 +9,12 @@ import ModalPanel from '@/components/modalPanel.vue'
 import FormGroup from '@/components/formGroup.vue'
 import Card from '@/components/card.vue'
 import { createTicket } from '@/composable/services/useTicketService';
-import { getAllTeams } from '@/composable/services/useTeamService';
+import { useTeamStore } from '@/stores/teamStore';
+
 
 const modalCreate = ref(false)
 const teams = ref([])
+const selectedValues = ref([])
 const teamNames = ref([])
 const form = reactive({
   name: '',
@@ -29,22 +31,12 @@ function toggleCreateModal() {
 }
 
 async function updateTeams() {
-  const { data, error, loading } = await getAllTeams();
-  
-  if (data) {
-    teams.value = data.value; 
-    teamNames.value = teams.value.map(team => team.name);
-  }
+  const teamStore = useTeamStore();
+  await teamStore.fetchTeams();
+
+  teams.value = teamStore.teams; 
+  teamNames.value = teams.value.map(team => team.name);
 }
-
-onMounted(async () => {
-  const { data, error, loading } = await getAllTeams();
-
-  if (data) {
-    teams.value = data.value; 
-    teamNames.value = teams.value.map(team => team.name);
-  }
-})
 
 async function handleCreateForm() {
   form.author_id = Number(localStorage.getItem('id'));
@@ -62,7 +54,12 @@ async function handleCreateForm() {
   }
 }
 
-const selectedValues = ref([])
+onMounted(async () => {
+  const teamStore = useTeamStore();
+
+  teams.value = teamStore.teams; 
+  teamNames.value = teams.value.map(team => team.name);
+})
 </script>
 
 <template>
@@ -84,7 +81,7 @@ const selectedValues = ref([])
       </Card>
 
       <section>
-        <Kanban :teams="teams"/>
+        <Kanban :filter-teams="selectedValues"/>
       </section>
 
       <FloatingAction direction="bottom-right" @click="toggleCreateModal">+</FloatingAction>

@@ -31,14 +31,7 @@ function formatPriority(itemPriority: String) {
 }
 
 function formatDate(itemDueDate) {
-  const date = new Date(itemDueDate);
-
-  const formatted =
-  String(date.getDate()).padStart(2, '0') + '-' +
-  String(date.getMonth() + 1).padStart(2, '0') + '-' +
-  date.getFullYear();
-
-  return formatted;
+  return new Date(itemDueDate).toLocaleDateString("en-GB");
 }
 
 const classes = computed(() => [
@@ -75,16 +68,21 @@ const classes = computed(() => [
     </div>
     <div class="bottom">
       <p class="item-priority">{{ formatPriority(props.ticket.priority) }}</p>
-      <p class="due_date"><small>{{ formatDate(props.ticket.due_date) }}</small></p>
+      <p class="due_date">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hourglass-split" viewBox="0 0 16 16">
+          <path d="M2.5 15a.5.5 0 1 1 0-1h1v-1a4.5 4.5 0 0 1 2.557-4.06c.29-.139.443-.377.443-.59v-.7c0-.213-.154-.451-.443-.59A4.5 4.5 0 0 1 3.5 3V2h-1a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-1v1a4.5 4.5 0 0 1-2.557 4.06c-.29.139-.443.377-.443.59v.7c0 .213.154.451.443.59A4.5 4.5 0 0 1 12.5 13v1h1a.5.5 0 0 1 0 1zm2-13v1c0 .537.12 1.045.337 1.5h6.326c.216-.455.337-.963.337-1.5V2zm3 6.35c0 .701-.478 1.236-1.011 1.492A3.5 3.5 0 0 0 4.5 13s.866-1.299 3-1.48zm1 0v3.17c2.134.181 3 1.48 3 1.48a3.5 3.5 0 0 0-1.989-3.158C8.978 9.586 8.5 9.052 8.5 8.351z"/>
+        </svg>
+        <small>{{ formatDate(props.ticket.due_date) }}</small>
+      </p>
     </div>
   </Card>
 </template>
 
 <style scoped lang="css">
 p {
-  text-overflow: ellipsis;
+  overflow-wrap: break-word;
   white-space: nowrap;
-  max-width: 100ch;
+  max-width: 50ch;
 }
 
 .tags {
@@ -222,6 +220,7 @@ h2 {
 
 .bottom {
   display: flex;
+  
   > * {
     flex: 1;
   }
@@ -229,5 +228,11 @@ h2 {
   > *:last-child {
     text-align: end;
   }
+}
+
+.due_date {
+  display: flex;
+  justify-content: end;
+  align-items: center;
 }
 </style>

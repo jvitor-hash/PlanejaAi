@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive, computed } from 'vue'
-// import searchFilter from '@/components/searchFilter.vue'
 import Card from '@/components/card.vue'
 import ProfileCard from '@/components/profileCard.vue'
 import Header from '@/layout/Header.vue'
 import Sidebar from '@/layout/Sidebar.vue'
+import FilterChips from '@/components/filterChips.vue'
 import FloatingAction from '@/components/floatingAction.vue'
 import ModalPanel from '@/components/modalPanel.vue'
 import FormGroup from '@/components/formGroup.vue'
-import { createTeam, getAllTeams } from '@/composable/services/useTeamService';
-import { getUsers } from '@/composable/services/useUserService';
+import { createTeam } from '@/composable/services/useTeamService';
+import { useUserStore } from '@/stores/userStore';
+import { useTeamStore } from '@/stores/teamStore';
 import TeamCard from '@/components/teamCard.vue'
 
 const users = ref([])
@@ -17,6 +18,7 @@ const teams = ref([])
 const teamNames = ref([])
 const searchQuery = ref('')
 const isModalOpen = ref(false)
+const selectedValues = ref([])
 
 const form = reactive({
   name: '',
@@ -26,18 +28,16 @@ const form = reactive({
 })
 
 async function listUsers() {
-  const { data, error, loading } = await getUsers();
+  const userStore = useUserStore();
 
-  if (data)
-    users.value = data.value
+  users.value = userStore.users;
 }
 
 async function getTeams() {
-  const { data, error, loading } = await getAllTeams();
+  const teamStore = useTeamStore();
 
-  if (data)
-    teams.value = data.value
-    teamNames.value = teams.value.map(team => team.name)
+  teams.value = teamStore.teams;
+  teamNames.value = teams.value.map(team => team.name);
 }
 
 // Handles submitting the form to create a new team
@@ -103,14 +103,10 @@ onMounted(() => {
             <input v-model="searchQuery" ref="search_input" type="text" placeholder="Pesquisar por nome" />
           </div>
 
-          <!-- <div class="filter-chips">
+          <div class="filter-chips">
             <p>Equipes:</p>
-            <FilterChips
-              v-for="team in teams"
-              :key="team.id"
-              :chips="teamNames.value"
-            />
-          </div> -->
+            <FilterChips :chips="teamNames" v-model="selectedValues" />
+          </div>
         </Card>
       </section>
 

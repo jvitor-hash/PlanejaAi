@@ -4,10 +4,12 @@ import Ticket from '@/components/ticket.vue'
 import { ref, reactive, onMounted, computed } from 'vue';
 import ModalPanel from '@/components/modalPanel.vue';
 import FormGroup from '@/components/formGroup.vue';
-import { getAllTickets, updateTicket } from '@/composable/services/useTicketService';
+import { updateTicket } from '@/composable/services/useTicketService';
+import { useTeamStore } from '@/stores/teamStore';
+import { useTicketStore } from '@/stores/ticketStore';
 
 const props = defineProps({
-  teams: {
+  filterTeams: {
     type: Array,
     required: true
   }
@@ -24,40 +26,50 @@ const form = reactive({
   description: '',
   priority: 'MED',
   status: 'PENDING',
-  due_date: new Date(),
+  due_date: '',
   team_id: 0,
   author_id: 0
 })
 
 async function getTickets() {
-  const { data, error, loading } = await getAllTickets();
+  const ticketStore = useTicketStore();
 
-  if (data)
-    tickets.value = data.value;
+  tickets.value = ticketStore.tickets;
 }
 
 async function getTeams() {
-  const { data, error, loading } = await getAllTeams();
+  const teamStore = useTeamStore();
 
-  if (data)
-    teams.value = data.value;
+  teams.value = teamStore.teams;
 }
 
-onMounted(async () => {
-  getTickets()
-  teams.value = props.teams;
-})
+const matchesTeamFilter = (ticket) => {
+  // No filter selected, show all teams
+  if (!props.filterTeams.length) return true
+
+  const team = teams.value.find(team => team.id === ticket.team_id)
+  return team && props.filterTeams.includes(team.name)
+}
 
 const pendingTickets = computed(() =>
-  tickets.value.filter(ticket => ['PENDING'].includes(ticket.status))
+  tickets.value.filter(ticket =>
+    ticket.status === 'PENDING' &&
+    matchesTeamFilter(ticket) 
+  )
 )
 
 const inProgressTickets = computed(() =>
-  tickets.value.filter(ticket => ['IN_PROGRESS'].includes(ticket.status))
+  tickets.value.filter(ticket =>
+    ticket.status === 'IN_PROGRESS' &&
+    matchesTeamFilter(ticket)
+  )
 )
 
 const completedTickets = computed(() =>
-  tickets.value.filter(ticket => ['DONE'].includes(ticket.status))
+  tickets.value.filter(ticket =>
+    ticket.status === 'DONE' &&
+    matchesTeamFilter(ticket)
+  )
 )
 
 async function handleUpdateForm() {
@@ -67,7 +79,28 @@ async function handleUpdateForm() {
     console.log(data);
 }
 
-function editModal(data : any) {
+function formatDate(date) {
+  const d = new Date(date);
+
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+const dueDate = computed({
+  get() {
+    return formatDate(form.due_date);
+  },
+  set(value) {
+    form.due_date = value;
+  }
+});
+
+function toggleEditModal(data : any) {
+  modalEditToggled.value = !modalEditToggled.value;
+
   if (data) {
     form.id = data.ticket.id
     form.name = data.ticket.name
@@ -75,13 +108,14 @@ function editModal(data : any) {
     form.priority = data.ticket.priority
     form.author_id = data.ticket.author_id
     form.team_id = data.ticket.team_id
+    form.due_date = data.ticket.due_date;
   }
 }
 
-function toggleEditModal() {
-  modalEditToggled.value = !modalEditToggled.value;
-}
-
+onMounted(async () => {
+  getTickets()
+  getTeams()
+})
 </script>
 
 <template>
@@ -91,7 +125,7 @@ function toggleEditModal() {
       <h2>Pendente</h2>
 
       <Ticket
-        v-for="ticket in pendingTickets" v-bind:key="ticket" :ticket="ticket" @settings-click="editModal(); toggleEditModal()"
+        v-for="ticket in pendingTickets" v-bind:key="ticket" :ticket="ticket" @settings-click="toggleEditModal"
       />
     </Card>
 
@@ -100,7 +134,7 @@ function toggleEditModal() {
       <h2>Em andamento</h2>
 
       <Ticket 
-        v-for="ticket in inProgressTickets" v-bind:key="ticket" :ticket="ticket" @settings-click="editModal(); toggleEditModal()" 
+        v-for="ticket in inProgressTickets" v-bind:key="ticket" :ticket="ticket" @settings-click="toggleEditModal" 
       />
     </Card>
 
@@ -109,7 +143,7 @@ function toggleEditModal() {
       <h2>Concluído</h2>
 
       <Ticket 
-        v-for="ticket in completedTickets" v-bind:key="ticket" :ticket="ticket" @settings-click="editModal(); toggleEditModal()" 
+        v-for="ticket in completedTickets" v-bind:key="ticket" :ticket="ticket" @settings-click="toggleEditModal" 
       />
     </Card>
   </Card>
@@ -127,7 +161,7 @@ function toggleEditModal() {
 
       <FormGroup label-text="Prioridade:">
         <select v-model="form.priority" required >
-          <option selected value="LOW">Baixa</option>
+          <option value="LOW">Baixa</option>
           <option value="MED">Media</option>
           <option value="HIGH">Alta</option>
         </select>
@@ -143,12 +177,12 @@ function toggleEditModal() {
 
       <FormGroup label-text="Equipe:">
         <select v-model="form.team_id" required >
-          <option v-for="team in props.teams" v-bind:key="team" :value="team.id">{{ team.name }}</option>
+          <option v-for="team in teams" v-bind:key="team" :value="team.id">{{ team.name }}</option>
         </select>
       </FormGroup>
       
       <FormGroup label-text="Data de atraso:">
-        <input v-model="form.due_date" type="date">
+        <input v-model="dueDate" type="date">
       </FormGroup>
 
       <div style="margin-top: var(--spacing-rg); display: flex; gap: var(--spacing-sm)" :no-label="true">

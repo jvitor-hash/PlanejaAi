@@ -46,11 +46,11 @@ onMounted(() => {
             <div v-if="nameStore" class="signup">
                 <UserProfile/>
                 <p>{{ nameStore }}</p>
-                <button @click="handleLogout">Log-out</button>
+                <button @click="handleLogout" class="btn btn-primary">Log-out</button>
             </div>
             <div v-else class="signup">
-                <button @click="handleLoginClick">Entrar</button>
-                <button @click="handleRegisterClick">Registrar-se</button>
+                <button @click="handleLoginClick" class="btn btn-primary">Entrar</button>
+                <button @click="handleRegisterClick" class="btn btn-primary">Registrar-se</button>
             </div>
         </div>
     </div>
@@ -75,28 +75,8 @@ onMounted(() => {
         display: flex;
         justify-content: end;
         align-items: center;
-        gap: 10px;
+        gap: 15px;
         padding-right: 5px;
-
-        button {
-            background-color: var(--accent-color);
-            border: 1px solid var(--accent-color);
-            color: white;
-            padding-left: var(--spacing-rg);
-            padding-right: var(--spacing-rg);
-            padding-top: var(--spacing-sm);
-            padding-bottom: var(--spacing-sm);
-            border-radius: 6px;
-            cursor: pointer;
-            text-wrap: nowrap;
-
-            transition: background-color 0.3s ease, color 0.3s ease;
-            
-            &:hover {
-                background-color: transparent;
-                color: var(--accent-color);
-            }
-        }
     }
 
     .header-wrapper .title {

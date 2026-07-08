@@ -90,12 +90,24 @@ router.post("/login", async (req, res) => {
             }
         
             res.json({
-                message: "Logged in successfully.",
+                id: user.id,
+                name: user.name,
             });
         });
     } catch (err) {
         res.status(500).json({ message: "Failed to fetch user" });
     }
+})
+
+// User Logout
+router.post("/logout", async (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(500).json({ message: "Logout failed" });
+        }
+        res.clearCookie("connect.sid");
+        res.json({ message: "Logout successful" });
+    });
 })
 
 // Get user by ID

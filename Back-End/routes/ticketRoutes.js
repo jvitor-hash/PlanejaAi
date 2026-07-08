@@ -6,6 +6,7 @@ const ticketService = require("../services/ticketService");
 // Create ticket
 router.post("/", async (req, res) => {
     try {
+        req.body.author_id = req.session.id;
         const ticket = await ticketService.createTicket(req.body);
         res.status(201).json(ticket);
     } catch (error) {

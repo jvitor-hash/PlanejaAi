@@ -1,9 +1,8 @@
-const { useFetch } = require('../useFetch')
+const { useFetch } = await import('../useFetch')
 
 const API_URL = 'http://localhost:3000/api/ticket-activities'
 
-
-async function createTicketActivity(activityData) {
+export async function createTicketActivity(activityData) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/`, {
@@ -22,7 +21,7 @@ async function createTicketActivity(activityData) {
 }
 
 
-async function getAllTicketActivities() {
+export async function getAllTicketActivities() {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/`, {
@@ -38,7 +37,7 @@ async function getAllTicketActivities() {
 }
 
 
-async function getTicketActivityById(id) {
+export async function getTicketActivityById(id) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/${id}`, {
@@ -54,7 +53,7 @@ async function getTicketActivityById(id) {
 }
 
 
-async function getActivitiesByTicketId(ticketId) {
+export async function getActivitiesByTicketId(ticketId) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/ticket/${ticketId}`, {
@@ -70,7 +69,7 @@ async function getActivitiesByTicketId(ticketId) {
 }
 
 
-async function updateTicketActivity(id, activityData) {
+export async function updateTicketActivity(id, activityData) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/${id}`, {
@@ -90,7 +89,7 @@ async function updateTicketActivity(id, activityData) {
 }
 
 
-async function deleteTicketActivity(id) {
+export async function deleteTicketActivity(id) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/${id}`, {
@@ -104,11 +103,3 @@ async function deleteTicketActivity(id) {
     loading
   }
 }
-
-
-exports.createTicketActivity = createTicketActivity
-exports.getAllTicketActivities = getAllTicketActivities
-exports.getTicketActivityById = getTicketActivityById
-exports.getActivitiesByTicketId = getActivitiesByTicketId
-exports.updateTicketActivity = updateTicketActivity
-exports.deleteTicketActivity = deleteTicketActivity

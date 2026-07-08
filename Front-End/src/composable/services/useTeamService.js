@@ -1,9 +1,8 @@
-const { useFetch } = require('../useFetch')
+const { useFetch } = await import('../useFetch')
 
 const API_URL = 'http://localhost:3000/api/teams'
 
-
-async function createTeam(teamData) {
+export async function createTeam(teamData) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/`, {
@@ -22,7 +21,7 @@ async function createTeam(teamData) {
 }
 
 
-async function getAllTeams() {
+export async function getAllTeams() {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/`, {
@@ -38,7 +37,7 @@ async function getAllTeams() {
 }
 
 
-async function getTeamById(id) {
+export async function getTeamById(id) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/${id}`, {
@@ -54,7 +53,7 @@ async function getTeamById(id) {
 }
 
 
-async function getTeamsByAuthor(authorId) {
+export async function getTeamsByAuthor(authorId) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/author/${authorId}`, {
@@ -70,7 +69,7 @@ async function getTeamsByAuthor(authorId) {
 }
 
 
-async function updateTeam(id, teamData) {
+export async function updateTeam(id, teamData) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/${id}`, {
@@ -90,7 +89,7 @@ async function updateTeam(id, teamData) {
 }
 
 
-async function updateTeamStatus(id, status) {
+export async function updateTeamStatus(id, status) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/${id}/status`, {
@@ -112,7 +111,7 @@ async function updateTeamStatus(id, status) {
 }
 
 
-async function deleteTeam(id) {
+export async function deleteTeam(id) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/${id}`, {
@@ -126,12 +125,3 @@ async function deleteTeam(id) {
     loading
   }
 }
-
-
-exports.createTeam = createTeam
-exports.getAllTeams = getAllTeams
-exports.getTeamById = getTeamById
-exports.getTeamsByAuthor = getTeamsByAuthor
-exports.updateTeam = updateTeam
-exports.updateTeamStatus = updateTeamStatus
-exports.deleteTeam = deleteTeam

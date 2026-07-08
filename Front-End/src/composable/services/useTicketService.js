@@ -1,9 +1,9 @@
-const { useFetch } = require('../useFetch')
+const { useFetch } = await import('../useFetch')
 
 const API_URL = 'http://localhost:3000/api/tickets'
 
 
-async function createTicket(ticketData) {
+export async function createTicket (ticketData) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/`, {
@@ -11,6 +11,7 @@ async function createTicket(ticketData) {
     headers: {
       'Content-Type': 'application/json'
     },
+    credentials: 'include',
     body: JSON.stringify(ticketData)
   })
 
@@ -22,7 +23,7 @@ async function createTicket(ticketData) {
 }
 
 
-async function getAllTickets(query = {}) {
+export async function getAllTickets (query = {}) {
   const { data, error, loading, execute } = useFetch()
 
   const params = new URLSearchParams(query).toString()
@@ -40,7 +41,7 @@ async function getAllTickets(query = {}) {
 }
 
 
-async function getTicketById(id) {
+export async function getTicketById (id) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/${id}`, {
@@ -56,7 +57,7 @@ async function getTicketById(id) {
 }
 
 
-async function getTicketByNumber(ticketNumber) {
+export async function getTicketByNumber (ticketNumber) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/number/${encodeURIComponent(ticketNumber)}`, {
@@ -72,7 +73,7 @@ async function getTicketByNumber(ticketNumber) {
 }
 
 
-async function updateTicket(id, ticketData) {
+export async function updateTicket (id, ticketData) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/${id}`, {
@@ -92,7 +93,7 @@ async function updateTicket(id, ticketData) {
 }
 
 
-async function updateTicketStatus(id, status) {
+export async function updateTicketStatus (id, status) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/${id}/status`, {
@@ -114,7 +115,7 @@ async function updateTicketStatus(id, status) {
 }
 
 
-async function deleteTicket(id) {
+export async function deleteTicket (id) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/${id}`, {
@@ -130,7 +131,7 @@ async function deleteTicket(id) {
 }
 
 
-async function getTicketsByTeam(teamId) {
+export async function getTicketsByTeam (teamId) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/team/${teamId}`, {
@@ -146,7 +147,7 @@ async function getTicketsByTeam(teamId) {
 }
 
 
-async function getTicketsByAuthor(authorId) {
+export async function getTicketsByAuthor (authorId) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/author/${authorId}`, {
@@ -160,14 +161,3 @@ async function getTicketsByAuthor(authorId) {
     loading
   }
 }
-
-
-exports.createTicket = createTicket
-exports.getAllTickets = getAllTickets
-exports.getTicketById = getTicketById
-exports.getTicketByNumber = getTicketByNumber
-exports.updateTicket = updateTicket
-exports.updateTicketStatus = updateTicketStatus
-exports.deleteTicket = deleteTicket
-exports.getTicketsByTeam = getTicketsByTeam
-exports.getTicketsByAuthor = getTicketsByAuthor

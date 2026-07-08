@@ -8,11 +8,13 @@ import Sidebar from '@/layout/Sidebar.vue'
 import FloatingAction from '@/components/floatingAction.vue'
 import ModalPanel from '@/components/modalPanel.vue'
 import FormGroup from '@/components/formGroup.vue'
-import { useFetch } from '@/composable/useFetch'
+import { createTeam, getAllTeams } from '@/composable/services/useTeamService';
+import { getUsers } from '@/composable/services/useUserService';
 import TeamCard from '@/components/teamCard.vue'
 
 const users = ref([])
 const teams = ref([])
+const teamNames = ref([])
 const searchQuery = ref('')
 const filterUsers = ref([])
 const isModalOpen = ref(false)
@@ -20,55 +22,36 @@ const isModalOpen = ref(false)
 const form = reactive({
   name: '',
   description: '',
-  status: 'ACTIVE',
-  members: [],
+  team_status: 'ACTIVE',
+  author_id: 0,
 })
 
-async function getUsers() {
-  const { data, execute } = useFetch()
+async function listUsers() {
+  const { data, error, loading } = await getUsers();
 
-  await execute('http://localhost:3000/api/users/', {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-  })
-
-  users.value = data.value
+  if (data)
+    users.value = data.value
 }
 
 async function getTeams() {
-  const { data, execute } = useFetch()
+  const { data, error, loading } = await getAllTeams();
 
-  await execute('http://localhost:3000/api/teams/', {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-  })
-
-  teams.value = data.value
+  if (data)
+    teams.value = data.value
+    teamNames.value = teams.value.map(team => team.name)
 }
 
 // Handles submitting the form to create a new team
 async function handleForm() {
-  const { data, error, execute } = useFetch()
+  form.author_id = Number(localStorage.getItem('id'));
+  const { data, error, execute } = createTeam(form);
 
-  await execute('http://localhost:3000/api/teams/', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify({
-      title: form.name,
-      description: form.description,
-      team_status: form.status
-    }),
-  })
-
-  if (!error.value) {
+  if (!error) {
     // Refresh the list, reset form fields, and close modal on success
-    await getTeams()
+    await listUsers()
     form.name = ''
     form.description = ''
-    form.status = 'ACTIVE'
+    form.team_status = 'ACTIVE'
     toggleModal()
   }
 }
@@ -86,8 +69,8 @@ function toggleModal() {
 }
 
 onMounted(() => {
-  getUsers()
-  getTeams() // Fetch teams on component load
+  listUsers()
+  getTeams()
 })
 </script>
 
@@ -109,7 +92,7 @@ onMounted(() => {
           v-for="team in teams"
           :key="team.id"
           :item-id="team.id"
-          :item-team-name="team.title"
+          :item-team-name="team.name"
           :item-team-description="team.description"
           :item-team-status="team.team_status"
         />
@@ -119,17 +102,16 @@ onMounted(() => {
         <Card>
           <div class="search">
             <input v-model="searchQuery" ref="search_input" type="text" placeholder="Pesquisar por nome" />
-            <!-- <button @click="filterSearch">Pesquisar</button> -->
           </div>
 
-          <!-- <div class="filter-chips">
+          <div class="filter-chips">
             <p>Equipes:</p>
             <FilterChips
               v-for="team in teams"
               :key="team.id"
-              :chips="teams.value.map((team) => team.name)"
+              :chips="teamNames.value"
             />
-          </div> -->
+          </div>
         </Card>
       </section>
 
@@ -160,7 +142,7 @@ onMounted(() => {
           </FormGroup>
 
           <FormGroup label-text="Status">
-            <select v-model="form.status" require>
+            <select v-model="form.team_status" require>
               <option value="ACTIVE">Ativo</option>
               <option value="INACTIVE">Inativo</option>
               <option value="ARCHIVED">Arquivado</option>
@@ -168,8 +150,8 @@ onMounted(() => {
           </FormGroup>
 
           <div style="margin-top: var(--spacing-rg); display: flex; gap: var(--spacing-sm)">
-            <button type="submit">Criar Equipe</button>
-            <button type="button" @click="toggleModal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Criar Equipe</button>
+            <button type="button" @click="toggleModal" class="btn btn-primary">Cancelar</button>
           </div>
         </form>
       </ModalPanel>

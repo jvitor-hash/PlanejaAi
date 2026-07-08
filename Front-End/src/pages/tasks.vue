@@ -8,30 +8,59 @@ import FloatingAction from '@/components/floatingAction.vue'
 import ModalPanel from '@/components/modalPanel.vue'
 import FormGroup from '@/components/formGroup.vue'
 import Card from '@/components/card.vue'
-import { useFetch } from '@/composable/useFetch'
+import { createTicket } from '@/composable/services/useTicketService';
+import { getAllTeams } from '@/composable/services/useTeamService';
 
 const modalCreate = ref(false)
+const teams = ref([])
+const teamNames = ref([])
 const form = reactive({
-  id: 0,
   name: '',
   description: '',
   priority: 'MED',
-  status: 'PENDING'
+  status: 'PENDING',
+  team_id: 0,
 })
 
 function toggleCreateModal() {
   modalCreate.value = !modalCreate.value;
 }
 
-async function handleCreateForm() {
-  const { data, error, loading, execute } = useFetch()
+async function updateTeams() {
+  const { data, error, loading } = await getAllTeams();
+  
+  if (data) {
+    teams.value = data.value; 
+    teamNames.value = teams.value.map(team => team.name);
+  }
+}
 
-  await execute('http://localhost:3000/api/tickets/', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify(form),
-  })
+onMounted(async () => {
+  const { data, error, loading } = await getAllTeams();
+
+  if (data) {
+    teams.value = data.value; 
+    teamNames.value = teams.value.map(team => team.name);
+  }
+})
+
+async function handleCreateForm() {
+  const { data, error, loading } = createTicket(form);
+
+  console.log('test');
+
+  if (data) {
+    await updateTeams();
+    form.name = '';
+    form.description = '';
+    form.priority = 'MED';
+    form.status = 'PENDING';
+    toggleCreateModal();
+  }
+}
+
+function selectedValues(value) {
+  return;
 }
 </script>
 
@@ -50,7 +79,7 @@ async function handleCreateForm() {
 
       <!-- <Card class="teams-card">
         <p><b>Equipes:</b></p>
-        <FilterChips :chips="teamNames.values" v-model="selectedValues" />
+        <FilterChips :chips="teamNames" v-model="selectedValues" />
       </Card> -->
 
       <section>
@@ -67,8 +96,8 @@ async function handleCreateForm() {
             <input v-model="form.name" type="text" required placeholder="Nome do ticket..." />
           </FormGroup>
 
-          <FormGroup label-text="Descricao:">
-            <textarea v-model="form.description" required placeholder="Descricao do ticket..."></textarea>
+          <FormGroup label-text="Descrição:">
+            <textarea v-model="form.description" required placeholder="Descrição do ticket..."></textarea>
           </FormGroup>
 
           <FormGroup label-text="Prioridade:">
@@ -87,9 +116,15 @@ async function handleCreateForm() {
             </select>
           </FormGroup>
 
+          <FormGroup label-text="Equipe:">
+            <select v-for="team in teams">
+              <option :value="team.id">{{ team.name }}</option>
+            </select>
+          </FormGroup>
+
           <div style="margin-top: var(--spacing-rg); display: flex; gap: var(--spacing-sm)">
-            <button type="submit">Salvar</button>
-            <button type="button" @click="toggleCreateModal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <button type="button" @click="toggleCreateModal" class="btn btn-primary">Cancelar</button>
           </div>
         </form>
       </ModalPanel>

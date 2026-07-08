@@ -5,20 +5,14 @@ import Card from '@/components/card.vue';
 import StatsCounter from '@/components/StatsCounter.vue';
 import Graphs from '@/layout/Graphs.vue';
 import Activities from '@/layout/Activities.vue';
-import { useFetch } from '@/composable/useFetch';
+import { getAllTickets } from '@/composable/services/useTicketService';
 import { ref, onMounted, computed } from 'vue';
 
 const tickets = ref([]);
 const stats = [];
 
 onMounted(async () => {
-  const { data, error, loading, execute } = useFetch()
-
-  await execute('http://localhost:3000/api/tickets/', {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-  })
+  const { data, error, loading } = await getAllTickets();
 
   if (data)
     tickets.value = data.value;
@@ -33,9 +27,9 @@ const filterStats = computed(() => {
 
   for (const t of tickets.value) {
     const status = (t.status || '').toUpperCase()
-    if (status === 'PENDING' || status === 'BACKLOG') statusCount.pending++
-    else if (status === 'IN_PROGRESS' || status === 'REVIEW') statusCount.in_progress++
-    else if (status === 'DONE' || status === 'BLOCKED' || status === 'CANCELLED') statusCount.done++
+    if (status === 'PENDING') statusCount.pending++
+    else if (status === 'IN_PROGRESS') statusCount.in_progress++
+    else if (status === 'DONE') statusCount.done++
   }
 
   const total = tickets.value.length;

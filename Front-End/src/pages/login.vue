@@ -5,6 +5,7 @@ import FormGroup from '@/components/formGroup.vue';
 import Header from '@/layout/Header.vue'
 import Sidebar from '@/layout/Sidebar.vue'
 import Card from '@/components/card.vue'
+import { loginUser } from '@/composable/services/useUserService';
 
 const form = reactive({
   email: '',
@@ -14,37 +15,17 @@ const form = reactive({
 const router = useRouter();
 
 async function handleForm() {
-  const response = await fetch('http://localhost:3000/api/users/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify(form)
-  });
+  const { data, error, loading } = await loginUser(form);
 
-  if(!response.ok) {
-    throw new Error('Unable to log in');
-  }
-
-  if(response.status === 200) {
-    handleLogIn();
+  if(data) {
+    handleLogIn(data.value);
   }
 }
 
-async function handleLogIn() {
-  const response = await fetch('http://localhost:3000/api/users/me', {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include'
-  });
-
-  if(!response.ok) {
-    throw new Error('Unabled to get user info.');
-  }
-
-  const data = await response.json();
-
-  if (data) {
-    localStorage.setItem('name', data.name);
+async function handleLogIn(response) {
+  if (response) {
+    localStorage.setItem('name', response.name);
+    localStorage.setItem('id', response.id);
     router.push('/');    
   }
 }

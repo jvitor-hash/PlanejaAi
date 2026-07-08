@@ -1,9 +1,8 @@
-const { useFetch } = require('../useFetch')
+const { useFetch } = await import('../useFetch')
 
 const API_URL = 'http://localhost:3000/api/team-memberships'
 
-
-async function createTeamMembership(membershipData) {
+export async function createTeamMembership(membershipData) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/`, {
@@ -22,7 +21,7 @@ async function createTeamMembership(membershipData) {
 }
 
 
-async function getAllTeamMemberships() {
+export async function getAllTeamMemberships() {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/`, {
@@ -38,7 +37,7 @@ async function getAllTeamMemberships() {
 }
 
 
-async function getTeamMembershipById(id) {
+export async function getTeamMembershipById(id) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/${id}`, {
@@ -54,7 +53,7 @@ async function getTeamMembershipById(id) {
 }
 
 
-async function getMembershipByTeamAndUser(teamId, userId) {
+export async function getMembershipByTeamAndUser(teamId, userId) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/team/${teamId}/user/${userId}`, {
@@ -70,7 +69,7 @@ async function getMembershipByTeamAndUser(teamId, userId) {
 }
 
 
-async function updateTeamMembership(id, membershipData) {
+export async function updateTeamMembership(id, membershipData) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/${id}`, {
@@ -90,7 +89,7 @@ async function updateTeamMembership(id, membershipData) {
 }
 
 
-async function updateMembershipStatus(id, status) {
+export async function updateMembershipStatus(id, status) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/${id}/status`, {
@@ -112,7 +111,7 @@ async function updateMembershipStatus(id, status) {
 }
 
 
-async function deleteTeamMembership(id) {
+export async function deleteTeamMembership(id) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/${id}`, {
@@ -128,7 +127,7 @@ async function deleteTeamMembership(id) {
 }
 
 
-async function deleteMembershipByTeamAndUser(teamId, userId) {
+export async function deleteMembershipByTeamAndUser(teamId, userId) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/team/${teamId}/user/${userId}`, {
@@ -142,13 +141,3 @@ async function deleteMembershipByTeamAndUser(teamId, userId) {
     loading
   }
 }
-
-
-exports.createTeamMembership = createTeamMembership
-exports.getAllTeamMemberships = getAllTeamMemberships
-exports.getTeamMembershipById = getTeamMembershipById
-exports.getMembershipByTeamAndUser = getMembershipByTeamAndUser
-exports.updateTeamMembership = updateTeamMembership
-exports.updateMembershipStatus = updateMembershipStatus
-exports.deleteTeamMembership = deleteTeamMembership
-exports.deleteMembershipByTeamAndUser = deleteMembershipByTeamAndUser

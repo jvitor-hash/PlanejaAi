@@ -1,9 +1,8 @@
-const { useFetch } = require('../useFetch')
+const { useFetch } = await import('../useFetch')
 
 const API_URL = 'http://localhost:3000/api/ticket-assignments'
 
-
-async function createTicketAssignment(assignmentData) {
+export async function createTicketAssignment(assignmentData) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/`, {
@@ -22,7 +21,7 @@ async function createTicketAssignment(assignmentData) {
 }
 
 
-async function getAllTicketAssignments() {
+export async function getAllTicketAssignments() {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/`, {
@@ -38,7 +37,7 @@ async function getAllTicketAssignments() {
 }
 
 
-async function getTicketAssignmentById(id) {
+export async function getTicketAssignmentById(id) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/${id}`, {
@@ -54,7 +53,7 @@ async function getTicketAssignmentById(id) {
 }
 
 
-async function getTicketAssignmentsByTeam(teamId) {
+export async function getTicketAssignmentsByTeam(teamId) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/team/${teamId}`, {
@@ -70,7 +69,7 @@ async function getTicketAssignmentsByTeam(teamId) {
 }
 
 
-async function getTicketAssignmentsByUser(userId) {
+export async function getTicketAssignmentsByUser(userId) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/user/${userId}`, {
@@ -86,7 +85,7 @@ async function getTicketAssignmentsByUser(userId) {
 }
 
 
-async function updateTicketAssignment(id, assignmentData) {
+export async function updateTicketAssignment(id, assignmentData) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/${id}`, {
@@ -106,7 +105,7 @@ async function updateTicketAssignment(id, assignmentData) {
 }
 
 
-async function deleteTicketAssignment(id) {
+export async function deleteTicketAssignment(id) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/${id}`, {
@@ -120,12 +119,3 @@ async function deleteTicketAssignment(id) {
     loading
   }
 }
-
-
-exports.createTicketAssignment = createTicketAssignment
-exports.getAllTicketAssignments = getAllTicketAssignments
-exports.getTicketAssignmentById = getTicketAssignmentById
-exports.getTicketAssignmentsByTeam = getTicketAssignmentsByTeam
-exports.getTicketAssignmentsByUser = getTicketAssignmentsByUser
-exports.updateTicketAssignment = updateTicketAssignment
-exports.deleteTicketAssignment = deleteTicketAssignment

@@ -1,9 +1,8 @@
-const { useFetch } = require('../useFetch')
+const { useFetch } = await import('../useFetch')
 
 const API_URL = 'http://localhost:3000/api/users'
 
-
-async function createUser(userData) {
+export async function createUser (userData) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/`, {
@@ -18,7 +17,7 @@ async function createUser(userData) {
 }
 
 
-async function loginUser(credentials) {
+export async function loginUser (credentials) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/login`, {
@@ -34,7 +33,7 @@ async function loginUser(credentials) {
 }
 
 
-async function getUsers() {
+export async function getUsers () {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/`, {
@@ -46,7 +45,7 @@ async function getUsers() {
 }
 
 
-async function getUserById(id) {
+export async function getUserById (id) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/${id}`, {
@@ -58,7 +57,7 @@ async function getUserById(id) {
 }
 
 
-async function getUserByEmail(email) {
+export async function getUserByEmail (email) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/email/${encodeURIComponent(email)}`, {
@@ -70,7 +69,7 @@ async function getUserByEmail(email) {
 }
 
 
-async function updateUser(id, userData) {
+export async function updateUser (id, userData) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/${id}`, {
@@ -86,7 +85,7 @@ async function updateUser(id, userData) {
 }
 
 
-async function deleteUser(id) {
+export async function deleteUser (id) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/${id}`, {
@@ -96,12 +95,3 @@ async function deleteUser(id) {
 
   return { data, error, loading }
 }
-
-
-exports.createUser = createUser
-exports.loginUser = loginUser
-exports.getUsers = getUsers
-exports.getUserById = getUserById
-exports.getUserByEmail = getUserByEmail
-exports.updateUser = updateUser
-exports.deleteUser = deleteUser

@@ -2,9 +2,9 @@
 import Card from '@/components/card.vue'
 import Ticket from '@/components/ticket.vue'
 import { ref, reactive, onMounted, computed } from 'vue';
-import { useFetch } from '@/composable/useFetch';
 import ModalPanel from '@/components/modalPanel.vue';
 import FormGroup from '@/components/formGroup.vue';
+import { getAllTickets, updateTicket } from '@/composable/services/useTicketService';
 const tickets = ref([])
 const modalEditToggled = ref(false);
 
@@ -17,13 +17,7 @@ const form = reactive({
 })
 
 onMounted(async () => {
-  const { data, error, loading, execute } = useFetch();
-
-  await execute('http://localhost:3000/api/tickets/', {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include'
-  });
+  const { data, error, loading } = getAllTickets();
 
   if (data)
     tickets.value = data.value;
@@ -31,31 +25,24 @@ onMounted(async () => {
 
 const pendingTickets = computed(() =>
   tickets.value.filter(ticket =>
-    ['BACKLOG', 'PENDING'].includes(ticket.status)
+    ['PENDING'].includes(ticket.status)
   )
 )
 
 const inProgressTickets = computed(() =>
   tickets.value.filter(ticket =>
-    ['IN_PROGRESS', 'REVIEW'].includes(ticket.status)
+    ['IN_PROGRESS'].includes(ticket.status)
   )
 )
 
 const completedTickets = computed(() =>
   tickets.value.filter(ticket =>
-    ['DONE', 'BLOCKED', 'CLOSED'].includes(ticket.status)
+    ['DONE'].includes(ticket.status)
   )
 )
 
 async function handleUpdateForm() {
-  const { data, error, loading, execute } = useFetch();
-
-  await execute(`http://localhost:3000/api/tickets/${form.id}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify(form)
-  });
+  const { data, error, loading } = updateTicket(form.id, form);
 
   if (data)
     console.log(data);
@@ -150,8 +137,8 @@ function toggleEditModal(data) {
       </FormGroup>
 
       <div style="margin-top: var(--spacing-rg); display: flex; gap: var(--spacing-sm)" :no-label="true">
-        <button type="submit">Salvar</button>
-        <button type="button" @click="toggleEditModal">Cancelar</button>
+        <button type="submit" class="btn">Salvar</button>
+        <button type="button" @click="toggleEditModal" class="btn">Cancelar</button>
       </div>
     </form>
   </ModalPanel>

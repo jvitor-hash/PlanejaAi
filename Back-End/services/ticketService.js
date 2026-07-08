@@ -2,6 +2,7 @@ const Ticket = require("../models/ticketModel");
 
 exports.createTicket = async (data) => {
     try {
+        data.ticket_number = await Ticket.count() + 1; // Generate ticket number based on the count of existing tickets
         const ticket = await Ticket.create(data);
         return ticket;
     } catch (error) {

@@ -73,3 +73,25 @@ input, button, textarea, select {
 svg {
     color: var(--text-color);
 }
+
+.btn {
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+    padding-top: var(--spacing-sm);
+    padding-bottom: var(--spacing-sm);
+    border-radius: var(--spacing-xs);
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: var(--accent-color);
+    color: var(--bg-light);
+    border: 1px solid var(--accent-color);
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    &:hover {
+        background-color: transparent;
+        border: 1px solid var(--accent-color);
+        color: var(--text-color)
+    }
+}

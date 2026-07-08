@@ -4,7 +4,7 @@ import Header from '@/layout/Header.vue'
 import Sidebar from '@/layout/Sidebar.vue'
 import Card from '@/components/card.vue'
 import { reactive } from 'vue'
-import { useFetch } from '@/composable/useFetch';
+import { createUser } from '@/composable/services/useUserService';
 import router from '@/router'
 
 const form = reactive({
@@ -14,13 +14,7 @@ const form = reactive({
 })
 
 const submitForm = async () => {
-  const { data, error, loading, execute } = useFetch();
-
-  await execute('http://localhost:3000/api/users/', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(form)
-  });
+  const { data, error, loading } = await createUser(form);
 
   if (data)
     router.push('/login');

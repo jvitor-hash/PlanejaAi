@@ -23,6 +23,15 @@ exports.getAllTickets = async (filters = {}) => {
     }
 };
 
+exports.getTicketCount = async () => {
+    try {
+        const count = await Ticket.count();
+        return count;        
+    } catch (error) {
+        throw new Error(`Error fetching ticket count: ${error.message}`)
+    }
+}
+
 exports.getTicketById = async (id) => {
     try {
         const ticket = await Ticket.findByPk(id);

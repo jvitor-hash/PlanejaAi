@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, reactive, computed } from 'vue'
 import Header from '@/layout/Header.vue'
 import Kanban from '@/layout/Kanban.vue'
 import Sidebar from '@/layout/Sidebar.vue'
@@ -19,7 +19,9 @@ const form = reactive({
   description: '',
   priority: 'MED',
   status: 'PENDING',
+  due_date: new Date(),
   team_id: 0,
+  author_id: 0
 })
 
 function toggleCreateModal() {
@@ -45,6 +47,7 @@ onMounted(async () => {
 })
 
 async function handleCreateForm() {
+  form.author_id = Number(localStorage.getItem('id'));
   const { data, error, loading } = createTicket(form);
 
   console.log('test');
@@ -59,9 +62,7 @@ async function handleCreateForm() {
   }
 }
 
-function selectedValues(value) {
-  return;
-}
+const selectedValues = ref([])
 </script>
 
 <template>
@@ -77,13 +78,13 @@ function selectedValues(value) {
     <main>
       <h1>Tarefas</h1>
 
-      <!-- <Card class="teams-card">
+      <Card class="teams-card">
         <p><b>Equipes:</b></p>
         <FilterChips :chips="teamNames" v-model="selectedValues" />
-      </Card> -->
+      </Card>
 
       <section>
-        <Kanban />
+        <Kanban :teams="teams"/>
       </section>
 
       <FloatingAction direction="bottom-right" @click="toggleCreateModal">+</FloatingAction>
@@ -117,9 +118,13 @@ function selectedValues(value) {
           </FormGroup>
 
           <FormGroup label-text="Equipe:">
-            <select v-for="team in teams">
-              <option :value="team.id">{{ team.name }}</option>
+            <select v-model="form.team_id" required>
+              <option v-for="team in teams" :value="team.id">{{ team.name }}</option>
             </select>
+          </FormGroup>
+
+          <FormGroup label-text="Data de atraso:">
+            <input v-model="form.due_date" type="date">
           </FormGroup>
 
           <div style="margin-top: var(--spacing-rg); display: flex; gap: var(--spacing-sm)">
@@ -172,6 +177,12 @@ function selectedValues(value) {
   h1 {
     color: var(--accent-color);
   }
+}
+
+.teams-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
 }
 
 :root[data-theme='dark'] {

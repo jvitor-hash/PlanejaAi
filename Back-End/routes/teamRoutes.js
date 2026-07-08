@@ -6,10 +6,11 @@ const teamService = require("../services/teamService");
 // Create team
 router.post("/", async (req, res) => {
     try {
+        const team = await teamService.createTeam(req.body);
         console.log(req.body);
-        const team = await teamService.createTeam(data);
         res.status(201).json(team);
     } catch (err) {
+        console.error(err);
         res.status(500).json({ message: "Failed to create team" });
     }
 });

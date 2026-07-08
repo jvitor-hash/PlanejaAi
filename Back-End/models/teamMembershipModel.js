@@ -5,7 +5,7 @@ const TeamMembership = sequelize.define("TeamMembership", {
     team_id: {
         type: DataTypes.INTEGER,
         references: {
-            model: "Team",
+            model: "Teams",
             key: "id",
         },
     },
@@ -13,7 +13,7 @@ const TeamMembership = sequelize.define("TeamMembership", {
     user_id: {
         type: DataTypes.INTEGER,
         references: {
-            model: "User",
+            model: "Users",
             key: "id",
         },
     },

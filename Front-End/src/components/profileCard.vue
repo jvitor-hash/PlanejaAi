@@ -44,21 +44,6 @@ const highlightClass = computed(() => props.profileStatus)
       <h3>{{ props.profileRole }}</h3>
       <p :class="highlightClass">{{ formatStatus(props.profileStatus) }}</p>
     </div>
-
-    <!-- <button class="settings">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        fill="currentColor"
-        class="bi bi-three-dots-vertical"
-        viewBox="0 0 16 16"
-      >
-        <path
-          d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"
-        />
-      </svg></button
-    > -->
   </Card>
 </template>
 
@@ -68,15 +53,6 @@ const highlightClass = computed(() => props.profileStatus)
   gap: var(--spacing-sm);
   max-height: 125px;
   align-items: center;
-}
-
-.settings {
-    border: none;
-    background: transparent;
-    position: absolute;
-    cursor: pointer;
-    top: 15px;
-    right: 15px;
 }
 
 .ACTIVE {

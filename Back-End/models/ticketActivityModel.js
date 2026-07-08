@@ -5,7 +5,7 @@ const TicketActivity = sequelize.define("TicketActivity", {
     ticket_id: {
         type: DataTypes.INTEGER,
         references: {
-            model: "Ticket",
+            model: "Tickets",
             key: "id",
         },
     },
@@ -13,7 +13,7 @@ const TicketActivity = sequelize.define("TicketActivity", {
     user_id: {
         type: DataTypes.INTEGER,
         references: {
-            model: "User",
+            model: "Users",
             key: "id",
         },
     },

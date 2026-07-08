@@ -10,6 +10,7 @@ export async function createTeam(teamData) {
     headers: {
       'Content-Type': 'application/json'
     },
+    credentials: 'include',
     body: JSON.stringify(teamData)
   })
 

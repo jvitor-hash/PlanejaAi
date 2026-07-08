@@ -86,12 +86,13 @@ svg {
 
 .btn-primary {
     background-color: var(--accent-color);
-    color: var(--bg-light);
+    color: contrast-color(var(--accent-color));
     border: 1px solid var(--accent-color);
     transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+
     &:hover {
         background-color: transparent;
         border: 1px solid var(--accent-color);
-        color: var(--text-color)
+        color: var(--text-color);
     }
 }

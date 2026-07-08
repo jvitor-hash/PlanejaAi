@@ -16,7 +16,6 @@ const users = ref([])
 const teams = ref([])
 const teamNames = ref([])
 const searchQuery = ref('')
-const filterUsers = ref([])
 const isModalOpen = ref(false)
 
 const form = reactive({
@@ -44,11 +43,11 @@ async function getTeams() {
 // Handles submitting the form to create a new team
 async function handleForm() {
   form.author_id = Number(localStorage.getItem('id'));
-  const { data, error, execute } = createTeam(form);
+  const { data, error, execute } = await createTeam(form);
 
-  if (!error) {
+  if (data) {
     // Refresh the list, reset form fields, and close modal on success
-    await listUsers()
+    await getTeams()
     form.name = ''
     form.description = ''
     form.team_status = 'ACTIVE'
@@ -104,14 +103,14 @@ onMounted(() => {
             <input v-model="searchQuery" ref="search_input" type="text" placeholder="Pesquisar por nome" />
           </div>
 
-          <div class="filter-chips">
+          <!-- <div class="filter-chips">
             <p>Equipes:</p>
             <FilterChips
               v-for="team in teams"
               :key="team.id"
               :chips="teamNames.value"
             />
-          </div>
+          </div> -->
         </Card>
       </section>
 

@@ -29,6 +29,11 @@ const Ticket = sequelize.define("Ticket", {
         }
     },
 
+    due_date: {
+        type: DataTypes.DATE,
+        allowNull: false,
+    },
+
     ticket_number: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -38,7 +43,7 @@ const Ticket = sequelize.define("Ticket", {
     team_id: {
         type: DataTypes.INTEGER,
         references: {
-            model: "Team",
+            model: "Teams",
             key: "id",
         },
     },
@@ -46,7 +51,7 @@ const Ticket = sequelize.define("Ticket", {
     author_id: {
         type: DataTypes.INTEGER,
         references: {
-            model: "User",
+            model: "Users",
             key: "id",
         },
     }

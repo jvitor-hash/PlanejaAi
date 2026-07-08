@@ -1,45 +1,14 @@
 <script setup lang="ts">
 import Card from './card.vue'
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import FilterChips from './filterChips.vue'
 import UserProfile from './userProfile.vue'
 
 const props = defineProps({
-  itemId: {
-    type: Number,
-    required: true,
-    default: 0
+  ticket: {
+    type: Object,
+    required: true
   },
-  itemPriority: {
-    type: String,
-    required: true,
-    default: 'low',
-  },
-  itemTags: {
-    type: [String],
-    required: true,
-    default: () => ['Tag-1', 'Tag-2']
-  },
-  itemTitle: {
-    type: String,
-    required: true,
-    default: 'Ticket Title'
-  },
-  itemDescription: {
-    type: String,
-    required: true,
-    default: '#Description'
-  },
-  itemStatus: {
-    type: String,
-    required: true,
-    default: 'BACKLOG'
-  },
-  itemDueDate: {
-    type: Date,
-    required: false,
-    default: new Date()
-  }
 })
 
 const emit = defineEmits<{
@@ -48,12 +17,7 @@ const emit = defineEmits<{
 
 function onSettingsClick() {
   emit('settings-click', {
-    id: props.itemId,
-    name: props.itemTitle,
-    description: props.itemDescription,
-    priority: props.itemPriority,
-    due_date: props.itemDueDate,
-    status: props.itemStatus
+    ticket: props.ticket
   })
 }
 
@@ -61,17 +25,24 @@ function formatPriority(itemPriority: String) {
   if (itemPriority === 'LOW')
     return 'Baixo';
   else if (itemPriority === 'MED')
-    return 'Media';
+    return 'Média';
   else if (itemPriority === 'HIGH')
     return 'Alta';
 }
 
-function formatDate(itemDueDate: Date) {
-  return itemDueDate.toLocaleDateString('en-GB') // DD-MM-AAAA;
+function formatDate(itemDueDate) {
+  const date = new Date(itemDueDate);
+
+  const formatted =
+  String(date.getDate()).padStart(2, '0') + '-' +
+  String(date.getMonth() + 1).padStart(2, '0') + '-' +
+  date.getFullYear();
+
+  return formatted;
 }
 
 const classes = computed(() => [
-  props.itemPriority.toLowerCase()
+  props.ticket.priority.toLowerCase()
 ])
 </script>
 
@@ -95,14 +66,17 @@ const classes = computed(() => [
         />
       </svg>
     </button>
-    <h2>{{ props.itemTitle }}</h2>
-    <p>{{ props.itemDescription }}</p>
+    <h2>{{ props.ticket.name }}</h2>
+    <p>{{ props.ticket.description }}</p>
     <div class="authors">
         <!-- <UserProfile/> -->
         <!-- <UserProfile/> -->
         <!-- <button class="add">+</button> -->
     </div>
-    <p class="item-priority">{{ formatPriority(props.itemPriority) }}</p>
+    <div class="bottom">
+      <p class="item-priority">{{ formatPriority(props.ticket.priority) }}</p>
+      <p class="due_date"><small>{{ formatDate(props.ticket.due_date) }}</small></p>
+    </div>
   </Card>
 </template>
 
@@ -246,7 +220,7 @@ h2 {
     right: 15px;
 }
 
-.date {
+.bottom {
   display: flex;
   > * {
     flex: 1;

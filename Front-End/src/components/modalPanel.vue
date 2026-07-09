@@ -1,11 +1,13 @@
 <script setup lang="ts"></script>
 
 <template>
-    <div class="modal-overlay">
-        <div class="modal">
-            <slot></slot>
+    <transition name="modal">
+        <div class="modal-overlay">
+            <div class="modal">
+                <slot></slot>
+            </div>
         </div>
-    </div>
+    </transition>
 </template>
 
 <style scoped lang="css">
@@ -28,6 +30,34 @@
         padding: var(--spacing-rg);
         border-radius: 8px;
         box-shadow: 0 0 8px 8px rgb(0 0 0 / 0.2);
-        width: 550px;
+        width: 575px;
+    }
+
+    .modal-enter-active,
+    .modal-leave-active {
+        transition: opacity 0.25s ease;
+    }
+
+    .modal-enter-active .modal,
+    .modal-leave-active .modal {
+        transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .modal-enter-from {
+        opacity: 0;
+    }
+
+    .modal-leave-to {
+        opacity: 0;
+    }
+
+    .modal-enter-from .modal {
+        transform: translateY(40px);
+        opacity: 0;
+    }
+
+    .modal-leave-to .modal {
+        transform: translateY(40px);
+        opacity: 0;
     }
 </style>

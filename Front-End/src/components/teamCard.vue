@@ -1,31 +1,26 @@
 <script setup lang="ts">
 import Card from './card.vue';
 import ModalPanel from '@/components/modalPanel.vue'
+import FormGroup from '@/components/formGroup.vue'
 import { ref, reactive, computed } from 'vue';
+import { updateTeam } from '@/composable/services/useTeamService';
+import { useTeamStore } from '@/stores/teamStore';
 
 const isModalOpen = ref(false)
+const activePage = ref('Edicao')
 
 const props = defineProps({
-    itemId: {
-        type: Number,
-        required: true,
-        default: 0
-    },
-    itemTeamName: {
-        type: String,
-        required: true,
-        default: '#Team Name'
-    },
-    itemTeamDescription: {
-        type: String,
-        required: true,
-        default: '#Team description'
-    },
-    itemTeamStatus: {
-        type: String,
-        required: true,
-        default: '#Team Status'
+    team: {
+        type: Object,
+        required: true
     }
+})
+
+const form = reactive({
+    id: '',
+    name: '',
+    description: '',
+    team_status: 'ACTIVE'
 })
 
 function formatTeamStatus(itemTeamStatus: String) {
@@ -37,23 +32,31 @@ function formatTeamStatus(itemTeamStatus: String) {
         return 'Arquivado';
 } 
 
-const highlightClass = computed(() => props.itemTeamStatus)
+const highlightClass = computed(() => props.team.team_status)
 
-function handleForm() {
+async function handleForm() {
+    const { data, error, loading } = await updateTeam(form.id, form);
 
+    if (data)
+        
+        toggleModal();
 }
 
 function toggleModal() {
     isModalOpen.value = !isModalOpen.value
+
+    form.name = props.team.name;
+    form.description = props.team.description;
+    form.team_status = props.team.team_status;
 }
 </script>
 
 <template>
     <Card>
         <div class="info">
-            <h2>{{ props.itemTeamName }}</h2>
-            <p>{{props.itemTeamDescription}}</p>
-            <p :class="highlightClass">{{ formatTeamStatus(props.itemTeamStatus) }}</p>
+            <h2>{{ props.team.name }}</h2>
+            <p>{{props.team.description}}</p>
+            <p :class="highlightClass">{{ formatTeamStatus(props.team.team_status) }}</p>
         </div>
 
         <button class="settings" @click="toggleModal">
@@ -65,18 +68,45 @@ function toggleModal() {
 
     <ModalPanel v-if="isModalOpen">
         <div class="modal-header">
-            <h2>{{ props.itemTeamName }}</h2>
+            <h2>{{ props.team.name }}</h2>
             <button class="close-btn" @click="toggleModal">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-octagon" viewBox="0 0 16 16">
-                    <path d="M4.54.146A.5.5 0 0 1 4.893 0h6.214a.5.5 0 0 1 .353.146l4.394 4.394a.5.5 0 0 1 .146.353v6.214a.5.5 0 0 1-.146.353l-4.394 4.394a.5.5 0 0 1-.353.146H4.893a.5.5 0 0 1-.353-.146L.146 11.46A.5.5 0 0 1 0 11.107V4.893a.5.5 0 0 1 .146-.353zM5.1 1 1 5.1v5.8L5.1 15h5.8l4.1-4.1V5.1L10.9 1z"/>
-                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
                 </svg>
             </button>
         </div>
-        
-        <div>
+        <nav>
+            <ul>
+                <li>
+                    <button class="btn btn-secondary">Edição</button>
+                </li>
+                <li>
+                    <button class="btn btn-secondary">Membros</button>
+                </li>
+            </ul>
+        </nav>
+        <hr>
+        <form @submit.prevent="handleForm">
+            <FormGroup label-text="Nome:">
+                <input v-model="form.name" type="text">
+            </FormGroup>
 
-        </div>
+            <FormGroup label-text="Descrição:">
+                <textarea v-model="form.description"></textarea>
+            </FormGroup>
+
+            <FormGroup label-text="Status da equipe:">
+                <select v-model="form.team_status">
+                    <option value="ACTIVE">Ativo</option>
+                    <option value="INACTIVE">Inativo</option>
+                    <option value="ARCHIVED">Arquivado</option>
+                </select>
+            </FormGroup>
+
+            <FormGroup :no-label="true">
+                <button class="btn btn-primary" style="width:auto;">Editar</button>
+            </FormGroup>
+        </form>
     </ModalPanel>
 </template>
 
@@ -90,8 +120,30 @@ function toggleModal() {
     right: 15px;
 }
 
+.form-group input, .form-group select, .form-group textarea, .form-group button {
+  font-family: inherit;
+  padding: var(--spacing-sm);
+}
+
+ul {
+    display: flex;
+    flex-direction: row;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+}
+
 .ACTIVE {
     color: var(--priority-med);
+}
+
+.ACTIVE::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: var(--priority-med);
+    border-radius: 3em;
+    z-index: 0;
 }
 
 .INACTIVE {
@@ -117,5 +169,9 @@ function toggleModal() {
     background-color: transparent;
     transform: scale(1.15);
     cursor: pointer;
+
+    > svg {
+        color: red;
+    }
 }
 </style>

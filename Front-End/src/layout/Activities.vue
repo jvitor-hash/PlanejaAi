@@ -1,68 +1,33 @@
 <script setup lang="ts">
-import { useFetch } from '@/composable/useFetch'
 import { ref, computed, onMounted } from 'vue'
+import { useTicketActivityStore } from '@/stores/ticketActivityStore'
 import ActivityItem from '@/components/activityItem.vue'
 import Card from '@/components/card.vue'
+import FilterChips from '@/components/filterChips.vue'
 
-// tickets from API
-const tickets = ref<any[]>([])
-
-// filter state
-const filter = ref<'day' | 'month' | 'year'>('day')
+const tickets = ref([])
+const Datefilter = ref([])
 
 // fetch tickets
 onMounted(async () => {
-  const { data, error, loading, execute } = useFetch()
-
-  await execute('http://localhost:3000/api/activity/', {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-  })
-
-  if (data) 
-    tickets.value = data.value
+  const ticketStore = useTicketActivityStore();
+  tickets.value = ticketStore.activities;
 })
-
-// helper: check date range
-function isWithinFilter(dateStr: string, type: string) {
-  const created = new Date(dateStr)
-  const now = new Date()
-
-  if (type === 'day') {
-    return created.toDateString() === now.toDateString()
-  }
-
-  if (type === 'month') {
-    return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear()
-  }
-
-  if (type === 'year') {
-    return created.getFullYear() === now.getFullYear()
-  }
-
-  return true
-}
 
 // filtered tickets
 const filteredTickets = computed(() => {
-  return tickets.value.filter((t) => isWithinFilter(t.created_at, filter.value))
+  return tickets.value;
 })
 </script>
 <template>
   <Card id="wrapper">
     <Card>
-      <div class="title">
+      <div class="header  ">
         <h1>Atividades Recentes</h1>
-
-        <select v-model="filter">
-          <option value="day">Dia</option>
-          <option value="month">Mês</option>
-          <option value="year">Ano</option>
-        </select>
+        <FilterChips :chips="['Dia', 'Mês', 'Ano']" v-model="filter" />
       </div>
 
-      <ActivityItem v-for="ticket in filteredTickets" :key="ticket.id" :item-action="ticket" />
+      <ActivityItem v-for="ticket in filteredTickets" v-bind:key="ticket" :item-action="ticket" />
     </Card>
 
     <Card>
@@ -81,17 +46,9 @@ const filteredTickets = computed(() => {
   }
 }
 
-.title {
+.header {
   display: flex;
-  > * {
-    flex: 1;
-  }
-}
-
-.title select {
-  max-width: fit-content;
-  border: none;
-  color: var(--accent-color);
-  background-color: transparent;
+  flex-direction: column;
+  gap: var(--spacing-sm);
 }
 </style>

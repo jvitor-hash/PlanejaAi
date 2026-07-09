@@ -35,6 +35,7 @@ async function listUsers() {
 
 async function getTeams() {
   const teamStore = useTeamStore();
+  await teamStore.fetchTeams();
 
   teams.value = teamStore.teams;
   teamNames.value = teams.value.map(team => team.name);
@@ -63,6 +64,18 @@ const filteredUsers = computed(() => {
   )
 })
 
+// TODO: Make this get the team ids from the name being 
+// filtered and then get the relation between the user 
+// and team by using the team membership table.
+const filteredTeams = computed(() => {
+  // const team_ids = [];
+  // for (team in teams) {
+  //   if team.name?.toLowerCase().includes(selectedValues.value.toLowerCase()) {
+  //     team_ids.append(team.id);
+  //   }
+  // }
+})
+
 function toggleModal() {
   isModalOpen.value = !isModalOpen.value
 }
@@ -87,14 +100,7 @@ onMounted(() => {
       <h1>Equipes</h1>
 
       <section class="grid">
-        <TeamCard
-          v-for="team in teams"
-          :key="team.id"
-          :item-id="team.id"
-          :item-team-name="team.name"
-          :item-team-description="team.description"
-          :item-team-status="team.team_status"
-        />
+        <TeamCard v-for="team in teams" v-bind:key="team" :team="team"/>
       </section>
 
       <section>
@@ -216,7 +222,7 @@ onMounted(() => {
 .search input[type='text'] {
   padding: var(--spacing-xs);
   outline-color: var(--accent-color);
-  min-width: 15%;
+  min-width: auto;
 }
 
 .search button {

@@ -9,6 +9,7 @@ import ModalPanel from '@/components/modalPanel.vue'
 import FormGroup from '@/components/formGroup.vue'
 import Card from '@/components/card.vue'
 import { createTicket } from '@/composable/services/useTicketService';
+import { useTicketStore } from '@/stores/ticketStore';
 import { useTeamStore } from '@/stores/teamStore';
 
 
@@ -30,11 +31,11 @@ function toggleCreateModal() {
   modalCreate.value = !modalCreate.value;
 }
 
-async function updateTeams() {
-  const teamStore = useTeamStore();
-  await teamStore.fetchTeams();
+async function updateTickets() {
+  const ticketStore = useTicketStore();
+  await ticketStore.fetchTickets();
 
-  teams.value = teamStore.teams; 
+  teams.value = ticketStore.teams; 
   teamNames.value = teams.value.map(team => team.name);
 }
 
@@ -42,10 +43,8 @@ async function handleCreateForm() {
   form.author_id = Number(localStorage.getItem('id'));
   const { data, error, loading } = createTicket(form);
 
-  console.log('test');
-
   if (data) {
-    await updateTeams();
+    await updateTickets();
     form.name = '';
     form.description = '';
     form.priority = 'MED';

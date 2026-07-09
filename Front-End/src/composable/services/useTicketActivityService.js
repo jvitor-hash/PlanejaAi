@@ -1,6 +1,6 @@
 const { useFetch } = await import('../useFetch')
 
-const API_URL = 'http://localhost:3000/api/ticket-activities'
+const API_URL = 'http://localhost:3000/api/tickets/activity'
 
 export async function createTicketActivity(activityData) {
   const { data, error, loading, execute } = useFetch()

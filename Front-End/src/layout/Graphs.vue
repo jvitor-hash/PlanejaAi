@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useFetch } from '@/composable/useFetch'
+import { useTicketStore } from '@/stores/ticketStore';
 import BarChart from '@/components/barChart.vue'
 import Card from '@/components/card.vue'
 import LineChart from '@/components/lineChart.vue'
@@ -10,16 +11,8 @@ const tickets = ref<any[]>([])
 
 // load data
 onMounted(async () => {
-  const { data, error, loading, execute } = useFetch()
-
-  await execute('http://localhost:3000/api/tickets/', {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-  })
-
-  if (data)
-    tickets.value = data.value;
+  const ticketStore = useTicketStore();
+  tickets.value = ticketStore.tickets;
 })
 
 /**
@@ -34,33 +27,18 @@ const pieData = computed(() => {
 
   for (const t of tickets.value) {
     const status = (t.status || '').toUpperCase()
-    if (status === 'PENDING' || status === 'BACKLOG') statusCount.pending++
-    else if (status === 'IN_PROGRESS' || status === 'REVIEW') statusCount.in_progress++
-    else if (status === 'DONE' || status === 'BLOCKED' || status === 'CANCELLED') statusCount.done++
+
+    if (status === 'PENDING')
+      statusCount.pending++
+    else if (status === 'IN_PROGRESS')
+      statusCount.in_progress++
+    else if (status === 'DONE')
+      statusCount.done++
   }
 
   const total = tickets.value.length;
 
   return [statusCount.pending, statusCount.in_progress, statusCount.done, total]
-})
-
-/**
- * BAR CHART: tickets per weekday (created_at assumed)
- */
-const barData = computed(() => {
-  const days = [0, 0, 0, 0, 0] // Mon–Fri
-
-  for (const t of tickets.value) {
-    if (!t.created_at) continue
-    const d = new Date(t.created_at).getDay()
-
-    // JS: 0=Sun ... 6=Sat → map Mon-Fri
-    if (d >= 1 && d <= 5) {
-      days[d - 1]++
-    }
-  }
-
-  return days
 })
 
 /**
@@ -79,7 +57,6 @@ const lineData = computed(() => {
 })
 
 const labels_pie = ['Pendente', 'Em andamento', 'Concluídos', 'Total']
-const labels_bar = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex']
 const labels_line = [
   'Jan',
   'Fev',
@@ -100,13 +77,15 @@ const labels_line = [
   <Card class="graphs">
     <Card :shadow="false">
       <h1>Grafico</h1>
-      <!-- <FilterChips :chips="['Dia', 'Mês', 'Ano']" v-model="selectedValues" /> -->
+      <FilterChips :chips="['Dia', 'Mês', 'Ano']" v-model="selectedValues" />
       <PieChart :labels="labels_pie" unit-name="Tickets" :data="pieData" />
     </Card>
 
     <Card :shadow="false">
-      <h1>Tickets concluídos semanal</h1>
-      <BarChart :labels="labels_bar" unit-name="Tickets" :data="barData" />
+      <h1>Tickets por prioridade</h1>
+      <div>
+
+      </div>
     </Card>
 
     <Card :shadow="false">

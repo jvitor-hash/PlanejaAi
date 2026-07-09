@@ -24,11 +24,11 @@ app.use(cors({
 const PORT = process.env.PORT || 3000;
 
 app.use('/api/users',               userRoutes);
-app.use('/api/teams',               teamRoutes);
 app.use('/api/teams/membership',    teamMembershipRoutes);
-app.use('/api/tickets',             ticketRoutes);
-app.use('/api/tickets/assignment',  ticketAssignmentRoutes);
+app.use('/api/teams',               teamRoutes);
 app.use('/api/tickets/activity',    ticketActivityRoutes);
+app.use('/api/tickets/assignment',  ticketAssignmentRoutes);
+app.use('/api/tickets',             ticketRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}\nhttp://localhost:${PORT}`);

@@ -5,18 +5,11 @@ import Card from '@/components/card.vue';
 import StatsCounter from '@/components/StatsCounter.vue';
 import Graphs from '@/layout/Graphs.vue';
 import Activities from '@/layout/Activities.vue';
-import { getAllTickets } from '@/composable/services/useTicketService';
+import { useTicketStore } from '@/stores/ticketStore';
 import { ref, onMounted, computed } from 'vue';
 
 const tickets = ref([]);
 const stats = [];
-
-onMounted(async () => {
-  const { data, error, loading } = await getAllTickets();
-
-  if (data)
-    tickets.value = data.value;
-})
 
 const filterStats = computed(() => {
   const statusCount = {
@@ -37,6 +30,11 @@ const filterStats = computed(() => {
   return [statusCount.pending, statusCount.in_progress, statusCount.done, total]
 })
 
+onMounted(async () => {
+  const ticketStore = useTicketStore();
+
+  tickets.value = ticketStore.tickets;
+})
 </script>
 
 <template>
@@ -66,7 +64,7 @@ const filterStats = computed(() => {
       </section>
 
       <section>
-        <!-- <Activities/> -->
+        <Activities/>
       </section>
     </main>
   </div>

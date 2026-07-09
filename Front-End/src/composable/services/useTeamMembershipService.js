@@ -1,6 +1,6 @@
 const { useFetch } = await import('../useFetch')
 
-const API_URL = 'http://localhost:3000/api/team-memberships'
+const API_URL = 'http://localhost:3000/api/teams/membership'
 
 export async function createTeamMembership(membershipData) {
   const { data, error, loading, execute } = useFetch()

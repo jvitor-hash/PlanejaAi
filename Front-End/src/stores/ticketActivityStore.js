@@ -11,7 +11,7 @@ export const useTicketActivityStore = defineStore('ticketActivityStore', {
       const { data, error, loading } = await getAllTicketActivities();
 
       if (data)
-        this.tickets = data.value;
+        this.activities = data.value;
 
       if (error.value)
         throw new Error(`Failed to initialize store, ${error}`);

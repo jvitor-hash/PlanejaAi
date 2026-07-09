@@ -2,7 +2,6 @@ const Ticket = require("../models/ticketModel");
 
 exports.createTicket = async (data) => {
     try {
-        data.ticket_number = await Ticket.count() + 1; // Generate ticket number based on the count of existing tickets
         const ticket = await Ticket.create(data);
         return ticket;
     } catch (error) {
@@ -10,10 +9,9 @@ exports.createTicket = async (data) => {
     }
 };
 
-exports.getAllTickets = async (filters = {}) => {
+exports.getAllTickets = async () => {
     try {
         const tickets = await Ticket.findAll({
-            where: filters,
             order: [["createdAt", "DESC"]],
         });
 
@@ -23,34 +21,9 @@ exports.getAllTickets = async (filters = {}) => {
     }
 };
 
-exports.getTicketCount = async () => {
-    try {
-        const count = await Ticket.count();
-        return count;        
-    } catch (error) {
-        throw new Error(`Error fetching ticket count: ${error.message}`)
-    }
-}
-
 exports.getTicketById = async (id) => {
     try {
         const ticket = await Ticket.findByPk(id);
-
-        if (!ticket) {
-            throw new Error("Ticket not found");
-        }
-
-        return ticket;
-    } catch (error) {
-        throw new Error(`Error fetching ticket: ${error.message}`);
-    }
-};
-
-exports.getTicketByNumber = async (ticket_number) => {
-    try {
-        const ticket = await Ticket.findOne({
-            where: { ticket_number },
-        });
 
         if (!ticket) {
             throw new Error("Ticket not found");

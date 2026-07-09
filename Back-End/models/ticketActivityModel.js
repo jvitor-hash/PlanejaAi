@@ -30,6 +30,7 @@ const TicketActivity = sequelize.define("TicketActivity", {
         validate: {
             isIn: [[
                 "CREATED", 
+                "DELETED",
                 "STATUS_CHANGED", 
                 "PRIORITY_CHANGED", 
                 "ASSIGNED", 

@@ -6,20 +6,18 @@ const ticketService = require("../services/ticketService");
 // Create ticket
 router.post("/", async (req, res) => {
     try {
-        req.body.ticket_number = await ticketService.getTicketCount() + 1;
-        console.log(req.body);
         const ticket = await ticketService.createTicket(req.body);
         res.status(201).json(ticket);
-    } catch (err) {
-        console.error(err);
-        res.status(400).json({ message: err.message });
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({ message: error.message });
     }
 });
 
 // Get all tickets
 router.get("/", async (req, res) => {
     try {
-        const tickets = await ticketService.getAllTickets(req.query);
+        const tickets = await ticketService.getAllTickets();
         res.status(200).json(tickets);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -30,19 +28,6 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
     try {
         const ticket = await ticketService.getTicketById(req.params.id);
-        res.status(200).json(ticket);
-    } catch (error) {
-        res.status(404).json({ message: error.message });
-    }
-});
-
-// Get ticket by ticket number
-router.get("/number/:ticket_number", async (req, res) => {
-    try {
-        const ticket = await ticketService.getTicketByNumber(
-            req.params.ticket_number
-        );
-
         res.status(200).json(ticket);
     } catch (error) {
         res.status(404).json({ message: error.message });
@@ -73,6 +58,7 @@ router.patch("/:id/status", async (req, res) => {
 
         res.status(200).json(ticket);
     } catch (error) {
+        console.error(error);
         res.status(400).json({ message: error.message });
     }
 });
@@ -83,6 +69,7 @@ router.delete("/:id", async (req, res) => {
         const result = await ticketService.deleteTicket(req.params.id);
         res.status(200).json(result);
     } catch (error) {
+        console.error(error);
         res.status(404).json({ message: error.message });
     }
 });

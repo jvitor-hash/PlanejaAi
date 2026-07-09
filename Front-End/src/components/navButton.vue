@@ -2,16 +2,26 @@
     import ToolTip from './toolTip.vue';
     import { ref } from 'vue'
 
-    interface Props {
-        tooltipEnabled: Boolean,
-        tooltipText: String,
-        tooltipDirection: String,
-        routeTo: String
-    }
-
     const isHovered = ref(false);
 
-    const props = defineProps<Props>();
+    const props = defineProps({
+        tooltipEnabled: {
+            type: Boolean,
+            required: true
+        },
+        tooltipText: {
+            type: String,
+            required: true
+        },
+        tooltipDirection: {
+            type: String,
+            required: true
+        },
+        routeTo: {
+            type: String,
+            required: true
+        }
+    });
 
     function mouseenter() {
         if (props.tooltipEnabled)
@@ -26,11 +36,9 @@
 
 <template>
     <span class="button-wrapper">
-        <button class="nav-button" @mouseenter="mouseenter" @mouseleave="mouseleave">
-            <RouterLink :to="props.routeTo">
-                <slot></slot>
-            </RouterLink>
-        </button>
+        <RouterLink :to="props.routeTo" @mouseenter="mouseenter" @mouseleave="mouseleave">
+            <slot></slot>
+        </RouterLink>
 
         <ToolTip :direction="props.tooltipDirection" :active="isHovered">{{ props.tooltipText }}</ToolTip>
     </span>
@@ -40,7 +48,7 @@
     .button-wrapper {
         position: relative;
 
-        .nav-button {
+        a {
             padding: var(--spacing-sm);
             border-radius: 4px;
             background-color: var(--bg);

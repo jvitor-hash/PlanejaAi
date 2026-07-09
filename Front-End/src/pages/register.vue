@@ -5,6 +5,7 @@ import Sidebar from '@/layout/Sidebar.vue'
 import Card from '@/components/card.vue'
 import { reactive } from 'vue'
 import { createUser } from '@/composable/services/useUserService';
+import { useUserStore } from '@/stores/userStore';
 import router from '@/router'
 
 const form = reactive({
@@ -13,10 +14,16 @@ const form = reactive({
   password: '',
 })
 
+async function updateUsers() {
+  const userStore = useUserStore();
+  await userStore.fetchUsers();
+}
+
 const submitForm = async () => {
   const { data, error, loading } = await createUser(form);
 
   if (data)
+    await updateUsers();
     router.push('/login');
 }
 </script>

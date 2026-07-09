@@ -34,12 +34,6 @@ const Ticket = sequelize.define("Ticket", {
         allowNull: false,
     },
 
-    ticket_number: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        unique: true,
-    },
-
     team_id: {
         type: DataTypes.INTEGER,
         references: {

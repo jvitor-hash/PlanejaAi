@@ -1,19 +1,38 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useFetch } from '@/composable/useFetch'
 import { useTicketStore } from '@/stores/ticketStore';
-import BarChart from '@/components/barChart.vue'
 import Card from '@/components/card.vue'
 import LineChart from '@/components/lineChart.vue'
 import PieChart from '@/components/pieChart.vue'
 
-const tickets = ref<any[]>([])
+const tickets = ref([])
+const statusCount = {
+  pending: 0,
+  in_progress: 0,
+  done: 0,
+}
+let total = tickets.value.length;
 
-// load data
-onMounted(async () => {
+function countTicketStatus(tickets) {
+  for (const t of tickets.value) {
+    const status = (t.status || '').toUpperCase()
+
+    if (status === 'PENDING')
+      statusCount.pending++
+    else if (status === 'IN_PROGRESS')
+      statusCount.in_progress++
+    else if (status === 'DONE')
+      statusCount.done++
+
+    total = tickets.value.length;
+  }
+}
+
+async function listTickets() {
   const ticketStore = useTicketStore();
+  
   tickets.value = ticketStore.tickets;
-})
+}
 
 /**
  * PIE CHART: status breakdown
@@ -24,6 +43,7 @@ const pieData = computed(() => {
     in_progress: 0,
     done: 0,
   }
+  let total = tickets.value.length;
 
   for (const t of tickets.value) {
     const status = (t.status || '').toUpperCase()
@@ -34,9 +54,9 @@ const pieData = computed(() => {
       statusCount.in_progress++
     else if (status === 'DONE')
       statusCount.done++
-  }
 
-  const total = tickets.value.length;
+    total = tickets.value.length;
+  }
 
   return [statusCount.pending, statusCount.in_progress, statusCount.done, total]
 })
@@ -48,8 +68,8 @@ const lineData = computed(() => {
   const months = Array(12).fill(0)
 
   for (const t of tickets.value) {
-    if (!t.created_at) continue
-    const m = new Date(t.created_at).getMonth()
+    if (!t.createdAt) continue
+    const m = new Date(t.createdAt).getMonth()
     months[m]++
   }
 
@@ -58,19 +78,17 @@ const lineData = computed(() => {
 
 const labels_pie = ['Pendente', 'Em andamento', 'Concluídos', 'Total']
 const labels_line = [
-  'Jan',
-  'Fev',
-  'Mar',
-  'Abr',
-  'Mai',
-  'Jun',
-  'Jul',
-  'Ago',
-  'Set',
-  'Out',
-  'Nov',
-  'Dez',
+  'Jan', 'Fev', 'Mar',
+  'Abr', 'Mai', 'Jun',
+  'Jul', 'Ago', 'Set',
+  'Out', 'Nov', 'Dez'
 ]
+
+// load data
+onMounted(async () => {
+  listTickets();
+  countTicketStatus(tickets);
+})
 </script>
 
 <template>
@@ -79,13 +97,6 @@ const labels_line = [
       <h1>Grafico</h1>
       <FilterChips :chips="['Dia', 'Mês', 'Ano']" v-model="selectedValues" />
       <PieChart :labels="labels_pie" unit-name="Tickets" :data="pieData" />
-    </Card>
-
-    <Card :shadow="false">
-      <h1>Tickets por prioridade</h1>
-      <div>
-
-      </div>
     </Card>
 
     <Card :shadow="false">
@@ -98,7 +109,7 @@ const labels_line = [
 <style scoped lang="css">
 .graphs {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
 
   @media (width < 650px) {
     grid-template-columns: repeat(1, 1fr);

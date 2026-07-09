@@ -3,7 +3,7 @@ import { getAllTeamMemberships } from '@/composable/services/useTeamMembershipSe
 
 export const useTeamMembershipStore = defineStore('teamMembership', {
   state: () => ({
-    activities: {}
+    memberships: {}
   }),
 
   actions: {

@@ -10,6 +10,7 @@ const ticketRoutes = require('./routes/ticketRoutes');
 const ticketAssignmentRoutes = require('./routes/ticketAssignmentRoutes');
 const ticketActivityRoutes = require('./routes/ticketActivityRoutes');
 const teamMembershipRoutes = require('./routes/teamMembershipRoutes');
+require("./models/associations");
 
 app = express();
 
@@ -24,8 +25,10 @@ app.use(cors({
 const PORT = process.env.PORT || 3000;
 
 app.use('/api/users',               userRoutes);
+
 app.use('/api/teams/membership',    teamMembershipRoutes);
 app.use('/api/teams',               teamRoutes);
+
 app.use('/api/tickets/activity',    ticketActivityRoutes);
 app.use('/api/tickets/assignment',  ticketAssignmentRoutes);
 app.use('/api/tickets',             ticketRoutes);

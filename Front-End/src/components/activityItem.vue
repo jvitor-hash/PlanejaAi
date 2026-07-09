@@ -1,53 +1,65 @@
 <script setup lang="ts">
-    const props = defineProps({
-        itemDate: {
-            type: String,
-            required: true,
-            default: '01 Jan 00:00'
-        },
-        itemActionAuthor: {
-            type: String,
-            required: true,
-            default: '#ActionAuthor'
-        },
-        itemActionAuthorHref: {
-            type: String,
-            required: true,
-            default: "#"
-        },
-        itemAction: {
-            type: String,
-            required: true,
-            default: '#Action'
-        },
-        itemNumber: {
-            type: String,
-            required: true,
-            default: '#00001'
-        }
-    });
+import { ref, onMounted } from 'vue';
+import { getUserById } from '@/composable/services/useUserService';
+
+const user = ref();
+
+const props = defineProps({
+    ticket: {
+        type: Object,
+        required: true
+    }
+});
+
+function formatDate(date) {
+  const d = new Date(date);
+
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+function formatType(type) {
+    if (type === 'CREATED')
+        return 'Criação'
+    else if (type === 'STATUS_CHANGED')
+        return 'Atualização'
+    else if (type === 'PRIORITY_CHANGED')
+        return 'Mudança de prioridade'
+    else if (type === 'ASSIGNED')
+        return 'Atribuído'
+    else if (type === 'UNASSIGNED')
+        return 'Não atribuído'
+    else if (type === 'COMMENT_ADDED')
+        return 'Comentário adicionado'
+}
+
+async function getUser(user_id : Number) {
+    const { data, error, loading } = await getUserById(user_id);
+
+    if (data)
+        user.value = data.value
+}
+
+onMounted(async () => {
+    await getUser(props.ticket.user_id)
+})
 </script>
 
 <template>
   <div class="item">
     <div class="icon">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        fill="currentColor"
-        class="bi bi-hourglass-split"
-        viewBox="0 0 16 16"
-      >
-        <path
-          d="M2.5 15a.5.5 0 1 1 0-1h1v-1a4.5 4.5 0 0 1 2.557-4.06c.29-.139.443-.377.443-.59v-.7c0-.213-.154-.451-.443-.59A4.5 4.5 0 0 1 3.5 3V2h-1a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-1v1a4.5 4.5 0 0 1-2.557 4.06c-.29.139-.443.377-.443.59v.7c0 .213.154.451.443.59A4.5 4.5 0 0 1 12.5 13v1h1a.5.5 0 0 1 0 1zm2-13v1c0 .537.12 1.045.337 1.5h6.326c.216-.455.337-.963.337-1.5V2zm3 6.35c0 .701-.478 1.236-1.011 1.492A3.5 3.5 0 0 0 4.5 13s.866-1.299 3-1.48zm1 0v3.17c2.134.181 3 1.48 3 1.48a3.5 3.5 0 0 0-1.989-3.158C8.978 9.586 8.5 9.052 8.5 8.351z"
-        />
-      </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-activity" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M6 2a.5.5 0 0 1 .47.33L10 12.036l1.53-4.208A.5.5 0 0 1 12 7.5h3.5a.5.5 0 0 1 0 1h-3.15l-1.88 5.17a.5.5 0 0 1-.94 0L6 3.964 4.47 8.171A.5.5 0 0 1 4 8.5H.5a.5.5 0 0 1 0-1h3.15l1.88-5.17A.5.5 0 0 1 6 2"/>
+        </svg>
     </div>
     <div class="info">
-        <p class="muted"><small>{{ props.itemDate }}</small></p>
-        <p class="action"><a :href="props.itemActionAuthorHref">{{ props.itemActionAuthor }}</a> {{ props.itemAction }}</p>
-        <p class="muted"><small>{{ props.itemNumber }}</small></p>
+        <p class="muted"><small>{{ formatDate(props.ticket.createdAt) }}</small></p>
+        <p class="muted"><small>{{ props.ticket.name }}</small></p>
+        <p class="action"><span>{{ user?.name }}</span> {{ props.ticket.action }}</p>
+        <p class="muted"><small>{{ formatType(props.ticket.type) }}</small></p>
     </div>
     <div></div>
   </div>
@@ -75,6 +87,7 @@
         position: relative;
         > svg {
             z-index: 1;
+            transform: scale(1.35);
             color: #fff;
         }
     }
@@ -95,8 +108,8 @@
         opacity: 0.5;
     }
 
-    .action a {
-        text-decoration: underline;
+    .action span {
+        /* text-decoration: underline; */
         color: var(--secondary-color);
     }
 </style>

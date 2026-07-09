@@ -23,12 +23,10 @@ export async function createTicket (ticketData) {
 }
 
 
-export async function getAllTickets (query = {}) {
+export async function getAllTickets () {
   const { data, error, loading, execute } = useFetch()
 
-  const params = new URLSearchParams(query).toString()
-
-  await execute(`${API_URL}/${params ? `?${params}` : ''}`, {
+  await execute(`${API_URL}/`, {
     method: 'GET',
     credentials: 'include'
   })
@@ -45,22 +43,6 @@ export async function getTicketById (id) {
   const { data, error, loading, execute } = useFetch()
 
   await execute(`${API_URL}/${id}`, {
-    method: 'GET',
-    credentials: 'include'
-  })
-
-  return {
-    data,
-    error,
-    loading
-  }
-}
-
-
-export async function getTicketByNumber (ticketNumber) {
-  const { data, error, loading, execute } = useFetch()
-
-  await execute(`${API_URL}/number/${encodeURIComponent(ticketNumber)}`, {
     method: 'GET',
     credentials: 'include'
   })

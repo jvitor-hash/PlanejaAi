@@ -4,34 +4,66 @@ import { useTicketActivityStore } from '@/stores/ticketActivityStore'
 import ActivityItem from '@/components/activityItem.vue'
 import Card from '@/components/card.vue'
 import FilterChips from '@/components/filterChips.vue'
+import BestPerfomance from '@/components/bestPerfomance.vue'
 
-const tickets = ref([])
+const ticketsActivities = ref([])
 const Datefilter = ref([])
-
-// fetch tickets
-onMounted(async () => {
-  const ticketStore = useTicketActivityStore();
-  tickets.value = ticketStore.activities;
-})
 
 // filtered tickets
 const filteredTickets = computed(() => {
-  return tickets.value;
+  const now = new Date();
+
+  return ticketsActivities.value.filter((ticket) => {
+    const created = new Date(ticket.createdAt);
+
+    switch (Datefilter.value) {
+      case "Dia":
+        return (
+          created.getFullYear() === now.getFullYear() &&
+          created.getMonth() === now.getMonth() &&
+          created.getDate() === now.getDate()
+        );
+
+      case "Mês":
+        return (
+          created.getFullYear() === now.getFullYear() &&
+          created.getMonth() === now.getMonth()
+        );
+
+      case "Ano":
+        return created.getFullYear() === now.getFullYear();
+
+      default:
+        return true;
+    }
+  });
+});
+
+function listTicketActivities() {
+  const activitiesStore = useTicketActivityStore();
+
+  ticketsActivities.value = activitiesStore.activities;
+}
+
+// fetch tickets
+onMounted(async () => {
+  listTicketActivities();
 })
 </script>
 <template>
   <Card id="wrapper">
     <Card>
-      <div class="header  ">
+      <div class="header">
         <h1>Atividades Recentes</h1>
-        <FilterChips :chips="['Dia', 'Mês', 'Ano']" v-model="filter" />
+        <FilterChips :chips="['Dia', 'Mês', 'Ano']" v-model="Datefilter" />
       </div>
 
-      <ActivityItem v-for="ticket in filteredTickets" v-bind:key="ticket" :item-action="ticket" />
+      <ActivityItem v-for="ticket in filteredTickets" v-bind:key="ticket" :ticket="ticket" />
     </Card>
 
     <Card>
       <h1>Melhores Funcionarios</h1>
+      <!-- <BestPerfomance /> -->
     </Card>
   </Card>
 </template>
@@ -50,5 +82,6 @@ const filteredTickets = computed(() => {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-rg);
 }
 </style>

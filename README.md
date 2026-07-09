@@ -152,7 +152,7 @@ PlanejaAi/
 │   │   │   └── userStore.js
 │   │   ├── App.vue
 │   │   └── main.ts
-│   └── index.html
+└── └── index.html
 ```
 
 ## Funcionalidades
